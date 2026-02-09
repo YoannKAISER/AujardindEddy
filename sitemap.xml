@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    
+    <!-- Page d'accueil -->
+    <url>
+        <loc>https://aujardindeddy.com/</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://aujardindeddy.com/AujardindEddy/LogoSansArrierePlan.png</image:loc>
+            <image:title>Logo Au Jardin d'Eddy</image:title>
+        </image:image>
+    </url>
+    
+    <!-- Page Entretien du Jardin -->
+    <url>
+        <loc>https://aujardindeddy.com/Entretiendujardin.html</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Page Aménagements -->
+    <url>
+        <loc>https://aujardindeddy.com/Amenagements.html</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Mentions légales -->
+    <url>
+        <loc>https://aujardindeddy.com/MentionsLegales.html</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+    <!-- Politique de confidentialité -->
+    <url>
+        <loc>https://aujardindeddy.com/Confidentialite.html</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+    <!-- Conditions générales -->
+    <url>
+        <loc>https://aujardindeddy.com/Conditions.html</loc>
+        <lastmod>2026-01-29</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+</urlset>

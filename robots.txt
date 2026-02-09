@@ -1,0 +1,30 @@
+# Robots.txt pour Au Jardin d'Eddy
+# https://aujardindeddy.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Interdire l'accès aux fichiers sensibles
+Disallow: /cgi-bin/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.php$
+
+# Sitemap
+Sitemap: https://aujardindeddy.com/sitemap.xml
+
+# Délai entre les requêtes (en secondes)
+Crawl-delay: 1
+
+# Robots spécifiques
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
