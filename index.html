@@ -362,7 +362,7 @@
                     <li><a href="#services" class="hover:text-garden-light transition-colors font-medium">Services</a></li>
                     <li><a href="#galerie" class="hover:text-garden-light transition-colors font-medium">Galerie</a></li>
                     <li><a href="#contact" class="bg-white text-garden-green px-6 py-2 rounded-full font-semibold hover:bg-garden-light hover:text-white transition-all shadow-lg">Contact</a></li>
-                    <li><button id="adminLoginToggle" type="button" class="admin-login-button">Connexion admin</button></li>
+                    <li><button id="adminLoginToggle" type="button" class="admin-login-button">Connexion</button></li>
                     <li><button id="adminSettingsToggle" type="button" class="admin-only admin-login-button">Paramètres</button></li>
                 </ul>
             </div>
@@ -374,7 +374,7 @@
                     <li><a href="#services" class="block py-2 hover:text-garden-light transition-colors font-medium">Services</a></li>
                     <li><a href="#galerie" class="block py-2 hover:text-garden-light transition-colors font-medium">Galerie</a></li>
                     <li><a href="#contact" class="block py-2 hover:text-garden-light transition-colors font-medium">Contact</a></li>
-                    <li><button id="adminLoginToggleMobile" type="button" class="admin-login-button w-full">Connexion admin</button></li>
+                    <li><button id="adminLoginToggleMobile" type="button" class="admin-login-button w-full">Connexion</button></li>
                     <li><button id="adminSettingsToggleMobile" type="button" class="admin-only admin-login-button w-full">Paramètres</button></li>
                 </ul>
             </div>
@@ -1151,7 +1151,7 @@
 
         function setAdminMode(isLoggedIn, username = '') {
             document.body.classList.toggle('admin-mode', isLoggedIn);
-            const loginLabel = isLoggedIn ? 'Déconnexion' : 'Connexion admin';
+            const loginLabel = isLoggedIn ? 'Déconnexion' : 'Connexion';
             if (adminLoginToggle) adminLoginToggle.textContent = loginLabel;
             if (adminLoginToggleMobile) adminLoginToggleMobile.textContent = loginLabel;
             if (adminSettingsToggle) adminSettingsToggle.style.display = isLoggedIn ? 'inline-flex' : 'none';
