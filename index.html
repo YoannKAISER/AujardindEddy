@@ -1085,16 +1085,16 @@
         };
 
         const DEFAULT_GALLERY_IMAGES = [
-            { id: 'default-1', src: '/Photos/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches' },
-            { id: 'default-2', src: '/Photos/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois' },
-            { id: 'default-3', src: '/Photos/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain' },
-            { id: 'default-4', src: '/Photos/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue' },
-            { id: 'default-5', src: '/Photos/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2' },
-            { id: 'default-6', src: '/Photos/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes' },
-            { id: 'default-7', src: '/Photos/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois' },
-            { id: 'default-8', src: '/Photos/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches' },
-            { id: 'default-9', src: '/Photos/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton' },
-            { id: 'default-10', src: '/Photos/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois' }
+            { id: 'default-1', src: './Photos/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches' },
+            { id: 'default-2', src: './Photos/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois' },
+            { id: 'default-3', src: './Photos/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain' },
+            { id: 'default-4', src: './Photos/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue' },
+            { id: 'default-5', src: './Photos/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2' },
+            { id: 'default-6', src: './Photos/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes' },
+            { id: 'default-7', src: './Photos/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois' },
+            { id: 'default-8', src: './Photos/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches' },
+            { id: 'default-9', src: './Photos/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton' },
+            { id: 'default-10', src: './Photos/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois' }
         ];
 
         const menuToggle = document.getElementById('menuToggle');
@@ -1129,8 +1129,19 @@
             return { ...DEFAULT_ADMIN_CREDENTIALS };
         }
 
+        function resolveApiUrl(url) {
+            if (!url || /^https?:\/\//i.test(url)) {
+                return url;
+            }
+
+            const normalized = url.startsWith('/') ? url : `/${url}`;
+            return `${window.location.origin}${normalized}`;
+        }
+
         async function fetchJson(url, options = {}) {
-            const response = await fetch(url, {
+            const resolvedUrl = resolveApiUrl(url);
+            const response = await fetch(resolvedUrl, {
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     ...(options.headers || {})
@@ -1205,6 +1216,11 @@
             } catch (error) {
                 setAdminMode(false, '');
             }
+        }
+
+        function showAdminUnavailable() {
+            const message = 'L’administration nécessite un hébergement avec backend Node.js. Sur GitHub Pages, la connexion admin n’est pas disponible sans API côté serveur.';
+            alert(message);
         }
 
         function getGalleryImages() {
@@ -1450,6 +1466,10 @@
                 }
                 openAdminModal();
             } catch (error) {
+                if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+                    showAdminUnavailable();
+                    return;
+                }
                 openAdminModal();
             }
         }

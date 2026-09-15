@@ -10,12 +10,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'change-this-secret-in-production';
 const isProduction = process.env.NODE_ENV === 'production';
+const SESSION_SECURE_COOKIE = process.env.SESSION_SECURE === 'true';
 
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const DATA_DIR = path.join(__dirname, 'data');
 const PUBLIC_GALLERY_DIR = path.join(__dirname, 'Photos');
 const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
 const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
+const ENV_FILE = path.join(__dirname, '.env');
 
 const ensureStorage = () => {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -62,16 +64,16 @@ ensureStorage();
 syncLegacyGalleryAssets();
 
 const defaultGallery = [
-  { id: 'default-1', src: '/Photos/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
-  { id: 'default-2', src: '/Photos/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
-  { id: 'default-3', src: '/Photos/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
-  { id: 'default-4', src: '/Photos/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
-  { id: 'default-5', src: '/Photos/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
-  { id: 'default-6', src: '/Photos/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
-  { id: 'default-7', src: '/Photos/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
-  { id: 'default-8', src: '/Photos/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
-  { id: 'default-9', src: '/Photos/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
-  { id: 'default-10', src: '/Photos/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
+  { id: 'default-1', src: './Photos/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
+  { id: 'default-2', src: './Photos/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
+  { id: 'default-3', src: './Photos/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
+  { id: 'default-4', src: './Photos/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
+  { id: 'default-5', src: './Photos/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
+  { id: 'default-6', src: './Photos/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
+  { id: 'default-7', src: './Photos/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
+  { id: 'default-8', src: './Photos/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
+  { id: 'default-9', src: './Photos/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
+  { id: 'default-10', src: './Photos/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
 ];
 
 const storage = multer.diskStorage({
@@ -98,6 +100,8 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/Photos', express.static(PUBLIC_GALLERY_DIR));
 app.use('/AujardindEddy', express.static(PUBLIC_GALLERY_DIR));
 
+app.set('trust proxy', 1);
+
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
@@ -105,7 +109,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: isProduction,
+    secure: SESSION_SECURE_COOKIE,
     maxAge: 1000 * 60 * 60 * 12
   }
 }));
@@ -122,6 +126,29 @@ const readGallery = () => {
 
 const writeGallery = (images) => {
   fs.writeFileSync(GALLERY_FILE, JSON.stringify({ images }, null, 2));
+};
+
+const writeEnvAdminCredentials = (username, password) => {
+  try {
+    if (!fs.existsSync(ENV_FILE)) return;
+
+    let envContent = fs.readFileSync(ENV_FILE, 'utf8');
+    const setOrReplace = (key, value) => {
+      const regex = new RegExp(`^${key}=.*$`, 'm');
+      const escapedValue = value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+      if (regex.test(envContent)) {
+        envContent = envContent.replace(regex, `${key}=${escapedValue}`);
+      } else {
+        envContent += `\n${key}=${escapedValue}\n`;
+      }
+    };
+
+    setOrReplace('ADMIN_USERNAME', username);
+    setOrReplace('ADMIN_PASSWORD', password);
+    fs.writeFileSync(ENV_FILE, envContent.trim() + '\n');
+  } catch (error) {
+    console.warn('Impossible de synchroniser les identifiants admin dans .env :', error.message);
+  }
 };
 
 const readAdmin = () => {
@@ -195,10 +222,10 @@ app.put('/api/admin/credentials', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Identifiant et mot de passe requis.' });
   }
 
-  const admin = readAdmin();
   const newHash = bcrypt.hashSync(password, 10);
   const updated = { username, passwordHash: newHash };
   fs.writeFileSync(ADMIN_FILE, JSON.stringify(updated, null, 2));
+  writeEnvAdminCredentials(username, password);
 
   req.session.username = username;
   res.json({ success: true, username });
