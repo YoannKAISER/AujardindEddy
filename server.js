@@ -62,16 +62,16 @@ ensureStorage();
 syncLegacyGalleryAssets();
 
 const defaultGallery = [
-  { id: 'default-1', src: '/uploads/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
-  { id: 'default-2', src: '/uploads/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
-  { id: 'default-3', src: '/uploads/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
-  { id: 'default-4', src: '/uploads/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
-  { id: 'default-5', src: '/uploads/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
-  { id: 'default-6', src: '/uploads/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
-  { id: 'default-7', src: '/uploads/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
-  { id: 'default-8', src: '/uploads/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
-  { id: 'default-9', src: '/uploads/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
-  { id: 'default-10', src: '/uploads/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
+  { id: 'default-1', src: '/AujardindEddy/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
+  { id: 'default-2', src: '/AujardindEddy/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
+  { id: 'default-3', src: '/AujardindEddy/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
+  { id: 'default-4', src: '/AujardindEddy/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
+  { id: 'default-5', src: '/AujardindEddy/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
+  { id: 'default-6', src: '/AujardindEddy/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
+  { id: 'default-7', src: '/AujardindEddy/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
+  { id: 'default-8', src: '/AujardindEddy/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
+  { id: 'default-9', src: '/AujardindEddy/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
+  { id: 'default-10', src: '/AujardindEddy/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
 ];
 
 const storage = multer.diskStorage({

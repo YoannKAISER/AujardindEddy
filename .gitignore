@@ -1,7 +1,15 @@
+# Dependencies
 node_modules/
+
+# Environment files
 .env
+.env.local
+
+# Runtime-generated storage (images + persisted data)
 uploads/*
 !uploads/.gitkeep
 data/*
 !data/.gitkeep
+
+# Logs
 npm-debug.log*
