@@ -244,6 +244,91 @@
         img[loading="lazy"]:not([src]) {
             filter: blur(10px);
         }
+
+        .admin-only {
+            display: none !important;
+        }
+
+        body.admin-mode .admin-only {
+            display: inline-flex !important;
+        }
+
+        body.admin-mode .delete-photo-btn {
+            display: inline-flex !important;
+        }
+
+        .admin-modal {
+            backdrop-filter: blur(6px);
+        }
+
+        .delete-photo-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            background: rgba(220, 38, 38, 0.92);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+            z-index: 10;
+        }
+
+        .delete-photo-btn:hover {
+            transform: scale(1.08);
+            background: rgba(185, 28, 28, 0.96);
+        }
+
+        .gallery-upload-grid figure,
+        .carousel-slide figure {
+            position: relative;
+        }
+
+        .gallery-delete-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(220, 38, 38, 0.92);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        body.admin-mode .gallery-delete-button,
+        body.admin-mode .delete-photo-btn {
+            display: inline-flex !important;
+        }
+
+        .admin-login-button,
+        #addPhotoButton {
+            background: #15803d;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.25rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .admin-login-button:hover,
+        #addPhotoButton:hover {
+            background: #166534;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 
@@ -277,6 +362,8 @@
                     <li><a href="#services" class="hover:text-garden-light transition-colors font-medium">Services</a></li>
                     <li><a href="#galerie" class="hover:text-garden-light transition-colors font-medium">Galerie</a></li>
                     <li><a href="#contact" class="bg-white text-garden-green px-6 py-2 rounded-full font-semibold hover:bg-garden-light hover:text-white transition-all shadow-lg">Contact</a></li>
+                    <li><button id="adminLoginToggle" type="button" class="admin-login-button">Connexion admin</button></li>
+                    <li><button id="adminSettingsToggle" type="button" class="admin-only admin-login-button">Paramètres</button></li>
                 </ul>
             </div>
             
@@ -287,10 +374,52 @@
                     <li><a href="#services" class="block py-2 hover:text-garden-light transition-colors font-medium">Services</a></li>
                     <li><a href="#galerie" class="block py-2 hover:text-garden-light transition-colors font-medium">Galerie</a></li>
                     <li><a href="#contact" class="block py-2 hover:text-garden-light transition-colors font-medium">Contact</a></li>
+                    <li><button id="adminLoginToggleMobile" type="button" class="admin-login-button w-full">Connexion admin</button></li>
+                    <li><button id="adminSettingsToggleMobile" type="button" class="admin-only admin-login-button w-full">Paramètres</button></li>
                 </ul>
             </div>
         </nav>
     </header>
+
+    <div id="adminLoginModal" class="admin-modal hidden fixed inset-0 z-[60] items-center justify-center bg-black/60 px-4">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-display text-2xl font-bold text-garden-green">Connexion administrateur</h3>
+                <button id="closeAdminModal" type="button" class="text-gray-500 hover:text-gray-800 text-2xl" aria-label="Fermer">×</button>
+            </div>
+            <form id="adminLoginForm" class="space-y-4">
+                <div>
+                    <label for="adminUsername" class="block text-sm font-semibold text-gray-700 mb-2">Identifiant</label>
+                    <input id="adminUsername" type="text" autocomplete="username" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-garden-green" required>
+                </div>
+                <div>
+                    <label for="adminPassword" class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
+                    <input id="adminPassword" type="password" autocomplete="current-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-garden-green" required>
+                </div>
+                <button type="submit" class="w-full bg-garden-green text-white font-bold py-3 rounded-lg hover:bg-garden-dark transition-colors">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminSettingsModal" class="admin-modal hidden fixed inset-0 z-[60] items-center justify-center bg-black/60 px-4">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-display text-2xl font-bold text-garden-green">Paramètres admin</h3>
+                <button id="closeAdminSettingsModal" type="button" class="text-gray-500 hover:text-gray-800 text-2xl" aria-label="Fermer">×</button>
+            </div>
+            <form id="adminSettingsForm" class="space-y-4">
+                <div>
+                    <label for="newAdminUsername" class="block text-sm font-semibold text-gray-700 mb-2">Nouvel identifiant</label>
+                    <input id="newAdminUsername" type="text" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-garden-green" required>
+                </div>
+                <div>
+                    <label for="newAdminPassword" class="block text-sm font-semibold text-gray-700 mb-2">Nouveau mot de passe</label>
+                    <input id="newAdminPassword" type="password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-garden-green" required>
+                </div>
+                <button type="submit" class="w-full bg-garden-green text-white font-bold py-3 rounded-lg hover:bg-garden-dark transition-colors">Enregistrer</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main>
@@ -540,7 +669,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-6">
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Allée_pierres_souches_troncs_arbres.jpeg" 
+                                            src="/uploads/Allée_pierres_souches_troncs_arbres.jpeg" 
                                             loading="lazy" 
                                             alt="Allée aménagée en pierres et souches d'arbres naturelles" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -551,7 +680,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Terrasse_en_bois.jpeg" 
+                                            src="/uploads/Terrasse_en_bois.jpeg" 
                                             loading="lazy" 
                                             alt="Terrasse en bois avec murs en pierres naturelles" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -562,7 +691,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Tonte_terrain.jpeg" 
+                                            src="/uploads/Tonte_terrain.jpeg" 
                                             loading="lazy" 
                                             alt="Terrain fraîchement tondu avec tondeuse professionnelle" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -579,7 +708,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-6">
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Allée_de_parc_entretenue.jpeg" 
+                                            src="/uploads/Allée_de_parc_entretenue.jpeg" 
                                             loading="lazy" 
                                             alt="Allée de parc public parfaitement entretenue et désherbée" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -590,7 +719,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Terrasse_en_bois_vue_opposée.jpeg" 
+                                            src="/uploads/Terrasse_en_bois_vue_opposée.jpeg" 
                                             loading="lazy" 
                                             alt="Vue alternative de la terrasse en bois avec mur en pierres" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -601,7 +730,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Multiphotos_tontes.jpeg" 
+                                            src="/uploads/Multiphotos_tontes.jpeg" 
                                             loading="lazy" 
                                             alt="Compilation de terrains publics et privés fraîchement tondus" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -618,7 +747,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-6">
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Allée_bois.jpeg" 
+                                            src="/uploads/Allée_bois.jpeg" 
                                             loading="lazy" 
                                             alt="Allée publique aménagée en bois naturel" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -629,7 +758,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Allée_souches_arbres.jpeg" 
+                                            src="/uploads/Allée_souches_arbres.jpeg" 
                                             loading="lazy" 
                                             alt="Allée créative réalisée avec des souches d'arbres" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -640,7 +769,7 @@
                                     </figure>
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Multiphotos_fabrication_escalier_béton.jpeg" 
+                                            src="/uploads/Multiphotos_fabrication_escalier_béton.jpeg" 
                                             loading="lazy" 
                                             alt="Étapes de fabrication d'un escalier extérieur en béton" 
                                             class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -657,7 +786,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-6">
                                     <figure class="group overflow-hidden rounded-xl">
                                         <img 
-                                            src="AujardindEddy/Contour_piscine_bois.jpeg" 
+                                            src="/uploads/Contour_piscine_bois.jpeg" 
                                             loading="lazy" 
                                             alt="Contour de piscine hors-sol aménagé en bois" 
                                             class="w-full h-64 md:h-80 object-cover mx-auto group-hover:scale-110 transition-transform duration-500"
@@ -692,15 +821,52 @@
                     </div>
 
                     <!-- Dots Navigation -->
-                    <div class="flex justify-center gap-2 p-4 bg-white">
+                    <div id="carousel-dots" class="flex justify-center gap-2 p-4 bg-white">
                         <button class="carousel-dot w-3 h-3 rounded-full bg-garden-green transition-all" data-slide="0" aria-label="Aller à la slide 1"></button>
                         <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="1" aria-label="Aller à la slide 2"></button>
                         <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="2" aria-label="Aller à la slide 3"></button>
                         <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="3" aria-label="Aller à la slide 4"></button>
                     </div>
+
+                    <div id="galleryAdminControls" class="admin-only flex justify-end px-4 pb-4 pt-2">
+                        <button id="addPhotoButton" type="button" class="inline-flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H5a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
+                            Ajouter une photo
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <div id="galleryUploadModal" class="admin-modal hidden fixed inset-0 z-[60] items-center justify-center bg-black/60 px-4">
+            <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-display text-2xl font-bold text-garden-green">Ajouter une photo</h3>
+                    <button id="closeGalleryUploadModal" type="button" class="text-gray-500 hover:text-gray-800 text-2xl" aria-label="Fermer">×</button>
+                </div>
+
+                <form id="galleryUploadForm" class="space-y-4">
+                    <div>
+                        <label for="galleryUploadFile" class="block text-sm font-semibold text-gray-700 mb-2">Choisir une photo</label>
+                        <input id="galleryUploadFile" type="file" accept=".jpeg,.jpg,.png,image/jpeg,image/png" required class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 file:mr-4 file:rounded-full file:border-0 file:bg-garden-green file:text-white file:px-4 file:py-2">
+                    </div>
+
+                    <div>
+                        <label for="galleryUploadTitle" class="block text-sm font-semibold text-gray-700 mb-2">Titre de la photo (alt SEO)</label>
+                        <input id="galleryUploadTitle" type="text" maxlength="120" placeholder="Ex : Terrasse en bois sur mesure" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-garden-green">
+                    </div>
+
+                    <div id="galleryUploadPreview" class="hidden overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
+                        <img id="galleryUploadPreviewImage" class="w-full h-48 object-cover" alt="Prévisualisation de la photo" />
+                    </div>
+
+                    <div class="flex gap-3 justify-end">
+                        <button id="cancelPhotoUpload" type="button" class="rounded-full border border-gray-300 px-5 py-2 font-semibold text-gray-700 hover:bg-gray-100">Annuler</button>
+                        <button type="submit" class="rounded-full bg-garden-green px-5 py-2 font-semibold text-white hover:bg-garden-dark">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Section Contact - Mobile First -->
         <section id="contact" class="py-12 md:py-20 bg-gradient-to-b from-white to-garden-green/5" role="region" aria-label="Contactez-nous">
@@ -913,82 +1079,526 @@
 
     <!-- JavaScript -->
     <script>
-        // Mobile Menu Toggle
+        const DEFAULT_ADMIN_CREDENTIALS = {
+            username: 'eddy',
+            password: 'EddyJardin2026!'
+        };
+
+        const DEFAULT_GALLERY_IMAGES = [
+            { id: 'default-1', src: '/uploads/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches' },
+            { id: 'default-2', src: '/uploads/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois' },
+            { id: 'default-3', src: '/uploads/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain' },
+            { id: 'default-4', src: '/uploads/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue' },
+            { id: 'default-5', src: '/uploads/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2' },
+            { id: 'default-6', src: '/uploads/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes' },
+            { id: 'default-7', src: '/uploads/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois' },
+            { id: 'default-8', src: '/uploads/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches' },
+            { id: 'default-9', src: '/uploads/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton' },
+            { id: 'default-10', src: '/uploads/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois' }
+        ];
+
         const menuToggle = document.getElementById('menuToggle');
         const navMenu = document.getElementById('navMenu');
-        
-        menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            const isExpanded = navMenu.classList.contains('active');
-            menuToggle.setAttribute('aria-expanded', isExpanded);
-        });
-
-        // Close mobile menu when clicking on a link
-        navMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            });
-        });
-
-        // Carousel
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-slide');
-        const dots = document.querySelectorAll('.carousel-dot');
+        const adminLoginToggle = document.getElementById('adminLoginToggle');
+        const adminLoginToggleMobile = document.getElementById('adminLoginToggleMobile');
+        const adminSettingsToggle = document.getElementById('adminSettingsToggle');
+        const adminSettingsToggleMobile = document.getElementById('adminSettingsToggleMobile');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        const adminSettingsModal = document.getElementById('adminSettingsModal');
+        const adminSettingsForm = document.getElementById('adminSettingsForm');
+        const closeAdminSettingsModal = document.getElementById('closeAdminSettingsModal');
+        const addPhotoButton = document.getElementById('addPhotoButton');
+        const galleryUploadModal = document.getElementById('galleryUploadModal');
+        const closeGalleryUploadModal = document.getElementById('closeGalleryUploadModal');
+        const cancelPhotoUpload = document.getElementById('cancelPhotoUpload');
+        const galleryUploadForm = document.getElementById('galleryUploadForm');
+        const galleryUploadFile = document.getElementById('galleryUploadFile');
+        const galleryUploadTitle = document.getElementById('galleryUploadTitle');
+        const galleryUploadPreview = document.getElementById('galleryUploadPreview');
+        const galleryUploadPreviewImage = document.getElementById('galleryUploadPreviewImage');
+        const carouselTrack = document.getElementById('carousel-track');
+        const carouselDots = document.getElementById('carousel-dots');
         const prevBtn = document.getElementById('carousel-prev');
         const nextBtn = document.getElementById('carousel-next');
+        let galleryImages = [...DEFAULT_GALLERY_IMAGES];
+        let currentSlide = 0;
 
-        function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => {
-                dot.classList.remove('bg-garden-green');
-                dot.classList.add('bg-gray-300');
-            });
-
-            currentSlide = (index + slides.length) % slides.length;
-            
-            slides[currentSlide].classList.add('active');
-            dots[currentSlide].classList.remove('bg-gray-300');
-            dots[currentSlide].classList.add('bg-garden-green');
+        function getAdminCredentials() {
+            return { ...DEFAULT_ADMIN_CREDENTIALS };
         }
 
-        prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
-        nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+        async function fetchJson(url, options = {}) {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(options.headers || {})
+                },
+                ...options
+            });
 
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => showSlide(index));
+            const contentType = response.headers.get('content-type') || '';
+            const payload = contentType.includes('application/json') ? await response.json() : await response.text();
+
+            if (!response.ok) {
+                const message = typeof payload === 'string' ? payload : (payload?.message || 'Une erreur est survenue.');
+                throw new Error(message);
+            }
+
+            return payload;
+        }
+
+        function setAdminMode(isLoggedIn, username = '') {
+            document.body.classList.toggle('admin-mode', isLoggedIn);
+            const loginLabel = isLoggedIn ? 'Déconnexion' : 'Connexion admin';
+            if (adminLoginToggle) adminLoginToggle.textContent = loginLabel;
+            if (adminLoginToggleMobile) adminLoginToggleMobile.textContent = loginLabel;
+            if (adminSettingsToggle) adminSettingsToggle.style.display = isLoggedIn ? 'inline-flex' : 'none';
+            if (adminSettingsToggleMobile) adminSettingsToggleMobile.style.display = isLoggedIn ? 'inline-flex' : 'none';
+            if (isLoggedIn && username) {
+                console.info('Admin connecté :', username);
+            }
+        }
+
+        function openAdminModal() {
+            adminLoginModal.classList.remove('hidden');
+            adminLoginModal.classList.add('flex');
+            const usernameInput = document.getElementById('adminUsername');
+            if (usernameInput) usernameInput.focus();
+        }
+
+        function closeAdminModalWindow() {
+            adminLoginModal.classList.add('hidden');
+            adminLoginModal.classList.remove('flex');
+        }
+
+        function openAdminSettingsModal() {
+            const usernameInput = document.getElementById('newAdminUsername');
+            const passwordInput = document.getElementById('newAdminPassword');
+            if (usernameInput) usernameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            adminSettingsModal.classList.remove('hidden');
+            adminSettingsModal.classList.add('flex');
+            if (usernameInput) usernameInput.focus();
+            fetch('/api/admin/credentials', {
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (usernameInput) usernameInput.value = data.username || '';
+                })
+                .catch(() => {
+                    if (usernameInput) usernameInput.value = DEFAULT_ADMIN_CREDENTIALS.username;
+                });
+        }
+
+        function closeAdminSettingsWindow() {
+            adminSettingsModal.classList.add('hidden');
+            adminSettingsModal.classList.remove('flex');
+        }
+
+        async function checkAdminSession() {
+            try {
+                const data = await fetchJson('/api/admin/session');
+                setAdminMode(Boolean(data.isAdmin), data.username || '');
+            } catch (error) {
+                setAdminMode(false, '');
+            }
+        }
+
+        function getGalleryImages() {
+            return galleryImages;
+        }
+
+        async function loadGalleryFromServer() {
+            try {
+                const data = await fetchJson('/api/gallery');
+                galleryImages = Array.isArray(data.images) ? data.images : [...DEFAULT_GALLERY_IMAGES];
+                renderCarousel();
+            } catch (error) {
+                galleryImages = [...DEFAULT_GALLERY_IMAGES];
+                renderCarousel();
+            }
+        }
+
+        function removeGalleryImageById(imageId) {
+            fetch(`/api/gallery/${encodeURIComponent(imageId)}`, {
+                method: 'DELETE'
+            })
+                .then(() => loadGalleryFromServer())
+                .catch(() => alert('La suppression n’a pas pu être effectuée.'));
+        }
+
+        function buildCarouselSlides() {
+            const images = getGalleryImages();
+            const slides = [];
+            for (let index = 0; index < images.length; index += 3) {
+                slides.push(images.slice(index, index + 3));
+            }
+
+            if (!slides.length) {
+                return '';
+            }
+
+            return slides.map((slideImages, slideIndex) => `
+                <div class="carousel-slide ${slideIndex === 0 ? 'active' : ''}">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-6">
+                        ${slideImages.map((image) => `
+                            <figure class="group relative overflow-hidden rounded-xl" data-id="${image.id}">
+                                <img src="${image.src}" alt="${image.alt || 'Photo de jardin'}" loading="lazy" class="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500" width="400" height="320">
+                                <button type="button" class="delete-photo-btn" data-id="${image.id}" aria-label="Supprimer cette photo">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M9 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1h3a1 1 0 1 1 0 2h-1l-.7 12.5A2 2 0 0 1 14.3 19H9.7a2 2 0 0 1-2-1.5L7 6H6a1 1 0 1 1 0-2h3V3zm2 1h2V4h-2v1zm-2.5 3.5l.7 10h7.6l.7-10h-9zm2.5 1.5a1 1 0 0 1 1 1v5.6a1 1 0 1 1-2 0v-5.6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v5.6a1 1 0 1 1-2 0v-5.6a1 1 0 0 1 1-1z"/>
+                                    </svg>
+                                </button>
+                            </figure>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function buildDots() {
+            const images = getGalleryImages();
+            const slidesCount = Math.max(1, Math.ceil(images.length / 3));
+            if (!carouselDots) return;
+
+            carouselDots.innerHTML = Array.from({ length: slidesCount }, (_, index) => `
+                <button class="carousel-dot w-3 h-3 rounded-full ${index === 0 ? 'bg-garden-green' : 'bg-gray-300 hover:bg-gray-400'} transition-all" data-slide="${index}" aria-label="Aller à la slide ${index + 1}"></button>
+            `).join('');
+        }
+
+        function renderCarousel() {
+            const slidesMarkup = buildCarouselSlides();
+            if (carouselTrack) {
+                carouselTrack.innerHTML = slidesMarkup || '<div class="carousel-slide active"><div class="grid grid-cols-1 p-4"><p class="text-center text-gray-500 italic">Aucune photo disponible.</p></div></div>';
+            }
+            buildDots();
+            initCarouselControls();
+            showSlide(0);
+        }
+
+        function initCarouselControls() {
+            if (prevBtn) {
+                prevBtn.onclick = () => showSlide(currentSlide - 1);
+            }
+            if (nextBtn) {
+                nextBtn.onclick = () => showSlide(currentSlide + 1);
+            }
+
+            document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                dot.onclick = () => showSlide(index);
+            });
+        }
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            if (!slides.length) return;
+
+            currentSlide = (index + slides.length) % slides.length;
+
+            slides.forEach((slide) => slide.classList.remove('active'));
+            slides[currentSlide].classList.add('active');
+
+            dots.forEach((dot) => {
+                const isActive = Number(dot.dataset.slide) === currentSlide;
+                dot.classList.toggle('bg-garden-green', isActive);
+                dot.classList.toggle('bg-gray-300', !isActive);
+                dot.classList.toggle('hover:bg-gray-400', !isActive);
+            });
+        }
+
+        function convertToWebp(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const image = new Image();
+                    image.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxSize = 1800;
+                        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+                        canvas.width = Math.max(1, Math.round(image.width * scale));
+                        canvas.height = Math.max(1, Math.round(image.height * scale));
+
+                        const context = canvas.getContext('2d');
+                        if (!context) {
+                            reject(new Error('Impossible de traiter l’image.'));
+                            return;
+                        }
+
+                        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('La conversion WebP a échoué.'));
+                                return;
+                            }
+                            const webpFile = new File([blob], `${Date.now()}-photo.webp`, { type: 'image/webp' });
+                            resolve(webpFile);
+                        }, 'image/webp', 0.82);
+                    };
+                    image.onerror = () => reject(new Error('Le fichier image est invalide.'));
+                    image.src = event.target.result;
+                };
+                reader.onerror = () => reject(new Error('Lecture du fichier impossible.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function resetGalleryUploadForm() {
+            galleryUploadForm.reset();
+            galleryUploadPreview.classList.add('hidden');
+            galleryUploadPreviewImage.removeAttribute('src');
+        }
+
+        function closeGalleryUploadWindow() {
+            galleryUploadModal.classList.add('hidden');
+            galleryUploadModal.classList.remove('flex');
+            resetGalleryUploadForm();
+        }
+
+        function previewSelectedFile() {
+            const file = galleryUploadFile.files[0];
+            if (!file) {
+                galleryUploadPreview.classList.add('hidden');
+                return;
+            }
+
+            const acceptedTypes = ['image/jpeg', 'image/png'];
+            const acceptedExtensions = ['.jpeg', '.jpg', '.png'];
+            const fileName = file.name.toLowerCase();
+            const isAllowed = acceptedTypes.includes(file.type) || acceptedExtensions.some((ext) => fileName.endsWith(ext));
+
+            if (!isAllowed) {
+                alert('Format non autorisé. Veuillez choisir une image .jpeg, .jpg ou .png.');
+                galleryUploadFile.value = '';
+                galleryUploadPreview.classList.add('hidden');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                galleryUploadPreviewImage.src = event.target.result;
+                galleryUploadPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function handlePhotoUpload(event) {
+            event.preventDefault();
+
+            const file = galleryUploadFile.files[0];
+            const altText = galleryUploadTitle.value.trim();
+
+            if (!file || !altText) {
+                alert('Veuillez choisir une photo et saisir un titre avant de valider.');
+                return;
+            }
+
+            const acceptedTypes = ['image/jpeg', 'image/png'];
+            const acceptedExtensions = ['.jpeg', '.jpg', '.png'];
+            const fileName = file.name.toLowerCase();
+            const isAllowed = acceptedTypes.includes(file.type) || acceptedExtensions.some((ext) => fileName.endsWith(ext));
+
+            if (!isAllowed) {
+                alert('Format non autorisé. Veuillez choisir une image .jpeg, .jpg ou .png.');
+                galleryUploadFile.value = '';
+                return;
+            }
+
+            try {
+                const webpFile = await convertToWebp(file);
+                const formData = new FormData();
+                formData.append('photo', webpFile, webpFile.name);
+                formData.append('title', altText);
+
+                const response = await fetch('/api/gallery/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(payload.message || 'Le téléversement a échoué.');
+                }
+
+                await loadGalleryFromServer();
+                closeGalleryUploadWindow();
+            } catch (error) {
+                alert(error.message || 'Le fichier n’a pas pu être converti. Veuillez réessayer.');
+            }
+        }
+
+        function handleDeletePhoto(event) {
+            const deleteButton = event.target.closest('.delete-photo-btn');
+            if (!deleteButton) return;
+
+            const imageId = deleteButton.dataset.id;
+            if (!imageId) return;
+
+            removeGalleryImageById(imageId);
+        }
+
+        async function toggleAdminAccess() {
+            try {
+                const session = await fetchJson('/api/admin/session');
+                if (session.isAdmin) {
+                    await fetchJson('/api/logout', { method: 'POST' });
+                    setAdminMode(false, '');
+                    return;
+                }
+                openAdminModal();
+            } catch (error) {
+                openAdminModal();
+            }
+        }
+
+        adminLoginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            try {
+                const data = await fetchJson('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password })
+                });
+                setAdminMode(true, data.username || username);
+                closeAdminModalWindow();
+                adminLoginForm.reset();
+            } catch (error) {
+                alert(error.message || 'Identifiant ou mot de passe incorrect.');
+            }
         });
 
-        // Auto-play carousel (optionnel)
-        setInterval(() => {
-            showSlide(currentSlide + 1);
-        }, 5000);
+        adminSettingsForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-        // Smooth scroll pour les ancres
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
+            const username = document.getElementById('newAdminUsername').value.trim();
+            const password = document.getElementById('newAdminPassword').value.trim();
+
+            if (!username || !password) {
+                alert('Veuillez remplir le nouvel identifiant et le nouveau mot de passe.');
+                return;
+            }
+
+            try {
+                await fetchJson('/api/admin/credentials', {
+                    method: 'PUT',
+                    body: JSON.stringify({ username, password })
+                });
+                closeAdminSettingsWindow();
+                alert('Identifiant et mot de passe administrateur mis à jour.');
+                setAdminMode(true, username);
+            } catch (error) {
+                alert(error.message || 'La mise à jour a échoué.');
+            }
+        });
+
+        if (adminLoginToggle) {
+            adminLoginToggle.addEventListener('click', toggleAdminAccess);
+        }
+        if (adminLoginToggleMobile) {
+            adminLoginToggleMobile.addEventListener('click', toggleAdminAccess);
+        }
+        if (adminSettingsToggle) {
+            adminSettingsToggle.addEventListener('click', openAdminSettingsModal);
+        }
+        if (adminSettingsToggleMobile) {
+            adminSettingsToggleMobile.addEventListener('click', openAdminSettingsModal);
+        }
+        if (closeAdminModal) {
+            closeAdminModal.addEventListener('click', closeAdminModalWindow);
+        }
+        if (closeAdminSettingsModal) {
+            closeAdminSettingsModal.addEventListener('click', closeAdminSettingsWindow);
+        }
+
+        adminLoginModal.addEventListener('click', (event) => {
+            if (event.target === adminLoginModal) {
+                closeAdminModalWindow();
+            }
+        });
+
+        adminSettingsModal.addEventListener('click', (event) => {
+            if (event.target === adminSettingsModal) {
+                closeAdminSettingsWindow();
+            }
+        });
+
+        if (addPhotoButton) {
+            addPhotoButton.addEventListener('click', () => {
+                galleryUploadModal.classList.remove('hidden');
+                galleryUploadModal.classList.add('flex');
+                setTimeout(() => galleryUploadTitle.focus(), 50);
+            });
+        }
+
+        if (closeGalleryUploadModal) {
+            closeGalleryUploadModal.addEventListener('click', closeGalleryUploadWindow);
+        }
+        if (cancelPhotoUpload) {
+            cancelPhotoUpload.addEventListener('click', closeGalleryUploadWindow);
+        }
+        if (galleryUploadModal) {
+            galleryUploadModal.addEventListener('click', (event) => {
+                if (event.target === galleryUploadModal) {
+                    closeGalleryUploadWindow();
+                }
+            });
+        }
+
+        if (galleryUploadFile) {
+            galleryUploadFile.addEventListener('change', previewSelectedFile);
+        }
+        if (galleryUploadForm) {
+            galleryUploadForm.addEventListener('submit', handlePhotoUpload);
+        }
+
+        document.addEventListener('click', (event) => {
+            const deleteButton = event.target.closest('.delete-photo-btn');
+            if (deleteButton) {
+                handleDeletePhoto(event);
+            }
+        });
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const isExpanded = navMenu.classList.contains('active');
+                menuToggle.setAttribute('aria-expanded', isExpanded);
+            });
+        }
+
+        if (navMenu) {
+            navMenu.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+            anchor.addEventListener('click', function (event) {
+                event.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
 
-        // Lazy loading optimization
+        checkAdminSession();
+        loadGalleryFromServer();
+
         if ('loading' in HTMLImageElement.prototype) {
             const images = document.querySelectorAll('img[loading="lazy"]');
-            images.forEach(img => {
+            images.forEach((img) => {
                 img.src = img.src;
             });
-        } else {
-            // Fallback for browsers that don't support lazy loading
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
-            document.body.appendChild(script);
         }
     </script>
 
