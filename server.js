@@ -13,7 +13,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const DATA_DIR = path.join(__dirname, 'data');
-const LEGACY_GALLERY_DIR = path.join(__dirname, 'AujardindEddy');
+const PUBLIC_GALLERY_DIR = path.join(__dirname, 'Photos');
 const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
 const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
 
@@ -34,9 +34,9 @@ const ensureStorage = () => {
 };
 
 const syncLegacyGalleryAssets = () => {
-  if (!fs.existsSync(LEGACY_GALLERY_DIR)) return;
+  if (!fs.existsSync(PUBLIC_GALLERY_DIR)) return;
 
-  const legacyFiles = [
+  const publicFiles = [
     'Allée_pierres_souches_troncs_arbres.jpeg',
     'Terrasse_en_bois.jpeg',
     'Tonte_terrain.jpeg',
@@ -49,8 +49,8 @@ const syncLegacyGalleryAssets = () => {
     'Contour_piscine_bois.jpeg'
   ];
 
-  legacyFiles.forEach((fileName) => {
-    const source = path.join(LEGACY_GALLERY_DIR, fileName);
+  publicFiles.forEach((fileName) => {
+    const source = path.join(PUBLIC_GALLERY_DIR, fileName);
     const target = path.join(UPLOADS_DIR, fileName);
     if (fs.existsSync(source) && !fs.existsSync(target)) {
       fs.copyFileSync(source, target);
@@ -62,16 +62,16 @@ ensureStorage();
 syncLegacyGalleryAssets();
 
 const defaultGallery = [
-  { id: 'default-1', src: '/AujardindEddy/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
-  { id: 'default-2', src: '/AujardindEddy/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
-  { id: 'default-3', src: '/AujardindEddy/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
-  { id: 'default-4', src: '/AujardindEddy/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
-  { id: 'default-5', src: '/AujardindEddy/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
-  { id: 'default-6', src: '/AujardindEddy/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
-  { id: 'default-7', src: '/AujardindEddy/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
-  { id: 'default-8', src: '/AujardindEddy/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
-  { id: 'default-9', src: '/AujardindEddy/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
-  { id: 'default-10', src: '/AujardindEddy/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
+  { id: 'default-1', src: '/Photos/Allée_pierres_souches_troncs_arbres.jpeg', alt: 'Allée aménagée en pierres et souches d arbres naturelles', title: 'Allée en pierres et souches', isDefault: true },
+  { id: 'default-2', src: '/Photos/Terrasse_en_bois.jpeg', alt: 'Terrasse en bois avec mur en pierres naturelles', title: 'Terrasse en bois', isDefault: true },
+  { id: 'default-3', src: '/Photos/Tonte_terrain.jpeg', alt: 'Terrain fraîchement tondu avec tondeuse professionnelle', title: 'Tonte de terrain', isDefault: true },
+  { id: 'default-4', src: '/Photos/Allée_de_parc_entretenue.jpeg', alt: 'Allée de parc public parfaitement entretenue et désherbée', title: 'Allée de parc entretenue', isDefault: true },
+  { id: 'default-5', src: '/Photos/Terrasse_en_bois_vue_opposée.jpeg', alt: 'Vue alternative de la terrasse en bois avec mur en pierres', title: 'Terrasse en bois - vue 2', isDefault: true },
+  { id: 'default-6', src: '/Photos/Multiphotos_tontes.jpeg', alt: 'Compilation de terrains publics et privés fraîchement tondus', title: 'Multiple tontes', isDefault: true },
+  { id: 'default-7', src: '/Photos/Allée_bois.jpeg', alt: 'Allée publique aménagée en bois naturel', title: 'Allée en bois', isDefault: true },
+  { id: 'default-8', src: '/Photos/Allée_souches_arbres.jpeg', alt: 'Allée créative réalisée avec des souches d arbres', title: 'Allée en souches', isDefault: true },
+  { id: 'default-9', src: '/Photos/Multiphotos_fabrication_escalier_béton.jpeg', alt: 'Étapes de fabrication d un escalier extérieur en béton', title: 'Escalier béton', isDefault: true },
+  { id: 'default-10', src: '/Photos/Contour_piscine_bois.jpeg', alt: 'Contour de piscine hors sol aménagé en bois', title: 'Contour piscine en bois', isDefault: true }
 ];
 
 const storage = multer.diskStorage({
@@ -95,7 +95,8 @@ const upload = multer({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(UPLOADS_DIR));
-app.use('/AujardindEddy', express.static(path.join(__dirname, 'AujardindEddy')));
+app.use('/Photos', express.static(PUBLIC_GALLERY_DIR));
+app.use('/AujardindEddy', express.static(PUBLIC_GALLERY_DIR));
 
 app.use(session({
   secret: SESSION_SECRET,

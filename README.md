@@ -200,7 +200,7 @@ Ce site a été entièrement refondu avec une approche **Mobile-First**, utilisa
 ├── MentionsLegales.html (à créer)
 ├── Confidentialite.html (à créer)
 ├── Conditions.html (à créer)
-├── AujardindEddy/
+├── Photos/
 │   ├── LogoSansArrierePlan.png
 │   ├── Arrière_plan_accueil.jpeg
 │   ├── Allée_pierres_souches_troncs_arbres.jpeg
@@ -261,7 +261,7 @@ Le formulaire de contact devra intégrer :
 - Possibilité de suppression des données
 
 ### Images
-Actuellement, les chemins d'images pointent vers `AujardindEddy/`. Assurez-vous que ce dossier existe avec toutes les images.
+Actuellement, les chemins d'images pointent vers `Photos/`. Assurez-vous que ce dossier existe avec toutes les images.
 
 ---
 
